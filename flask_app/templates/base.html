@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %} {% endblock %}- FlaskApp</title>
+    <style>
+      
+      body {
+        font-family: arial, sans-serif;
+      }
+
+      nav a {
+        color: #d64161;
+        font-size: 3em;
+        margin-left: 50px;
+        text-decoration: none;
+      }
+
+      .book {
+        padding: 20px;
+        margin: 10px;
+        background-color: #f7f4f4;
+      }
+
+      .content{
+        margin: 2%;
+      }
+
+      table .cliente {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('index') }}">JHC Serralheria</a>
+      <a href="{{ url_for('lista_clientes') }}">Clientes</a>
+    </nav>
+    <hr />
+    <div class="content">{% block content %} {% endblock %}</div>
+  </body>
+</html>

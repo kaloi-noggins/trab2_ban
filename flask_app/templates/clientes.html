@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Clientes {% endblock %}</h1>
+    
+    <form action="" method="post">
+        <p>
+            <input type="radio" name="seletor_query_clientes_tudo"> Tudo <br>
+            <input type="radio" name="seletor_query_clientes_cpf"> Pessoas Físicas <br>
+            <input type="radio" name="seletor_query_clientes_cnpj"> Pessoas Jurídicas <br>
+        </p>
+        <p><input type=submit value=Filtrar></p>
+    </form> 
+
+    <table class='cliente'>
+        <tr>
+            <th>Nome do Cliente</th>
+            <th>Indicação</th>
+            <th>Tipo de Cliente</th>
+            <th>CPF</th>
+            <th>CNPJ</th>
+            <th>Razao Social</th>
+        </tr>
+        {% for cliente in clientes %}
+            <tr>
+                <td>{{cliente[1]}}</td>
+                <td>{{cliente[2]}}</td> 
+                {% if cliente[3] == 0 %}
+                    <td>pessoa física</td>
+                    <td>{{cliente[4]}}</td>
+                    <td>N.A</td>
+                    <td>N.A</td>
+                {% else %}
+                    <td>pessoa jurídica</td> 
+                    <td>N.A</td>
+                    <td>{{cliente[5]}}</td>
+                    <td>{{cliente[6]}}</td>
+                {% endif%} 
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
