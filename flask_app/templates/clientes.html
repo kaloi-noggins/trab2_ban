@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Clientes {% endblock %}</h1>
+    <nav>
+        <a href="{{ url_for('clientes_consulta') }}">Consultar Clientes</a>
+        <a href="{{ url_for('clientes_cadastro') }}">Cadastrar Clientes</a>
+    </nav>
+
+    <h1>{% block title %} Clientes - Consultas {% endblock %}</h1>
     
     <form action="" method="post">
         <p>
-            <input type="radio" name="seletor_query_clientes_tudo"> Tudo <br>
-            <input type="radio" name="seletor_query_clientes_cpf"> Pessoas Físicas <br>
-            <input type="radio" name="seletor_query_clientes_cnpj"> Pessoas Jurídicas <br>
+            <input type="radio" name="seletor_query_clientes" value="tudo"> Tudo <br>
+            <input type="radio" name="seletor_query_clientes" value="cpf"> Pessoas Físicas <br>
+            <input type="radio" name="seletor_query_clientes" value="cnpj"> Pessoas Jurídicas <br>
         </p>
         <p><input type=submit value=Filtrar></p>
     </form> 

@@ -1,0 +1,59 @@
+{% extends "base.html"%}
+
+{% block content%}
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById("input_pessoa_juridica").style.display = "none"
+     }, false);
+
+    function muda_display_form_clientes(src) {
+        
+        if(src.value == "cpf"){
+            document.getElementById("input_pessoa_juridica").style.display = "none"
+            document.getElementById("input_pessoa_fisica").style.display = "block"
+        }else{
+            document.getElementById("input_pessoa_juridica").style.display = "block"
+            document.getElementById("input_pessoa_fisica").style.display = "none"
+        }
+    }
+
+</script>
+
+<nav>
+    <a href="{{ url_for('clientes_consulta') }}">Consultar Clientes</a>
+    <a href="{{ url_for('clientes_cadastro') }}">Cadastrar Clientes</a>
+</nav>
+
+<h1>{% block title %} Clientes - Cadastro {% endblock %}</h1>
+
+<form action="" method="post">
+    <h2>Endereço:</h2>
+    <p>
+        CEP: <input type="text" name="cep" id="input_cliente_cep"> <br>
+        Cidade: <input type="text" name="cidade" id="input_cliente_cidade"> <br>
+        Bairro: <input type="text" name="bairro" id="input_cliente_bairro"> <br>
+        Rua: <input type="text" name="rua" id="input_cliente_rua"> <br>
+        Numero: <input type="number" name="numero" id="input_cliente_numero"> <br>
+    </p>
+    <p>
+        <input type="radio" name="seletor_tipo_pesoa" value="cpf" onchange="muda_display_form_clientes(this);"> Pessoa Física<br>
+        <input type="radio" name="seletor_tipo_pesoa" value="cnpj" onchange="muda_display_form_clientes(this);"> Pessoa Jurídica<br>
+    </p>
+    <h2>Dados do Cliente:</h2>
+    <p>
+        Nome: <input type="text" name="nome" id="input_cliente_nome"> <br>
+        Referencia: <input type="text" name="referencia" id="input_cliente_referencia"> <br>
+    </p>
+    <p id="input_pessoa_fisica">
+        CPF: <input type="text" name="cpf" id="input_cliente_cpf"> <br>
+    </p>
+    <p id="input_pessoa_juridica">
+        CNPJ: <input type="text" name="cnpj id="input_cliente_cnpj"> <br>
+        Razao social: <input type="text" name="razao_social" id="input_cliente_razao_social"> <br>
+    </p>
+    <p><input type=submit value=Enviar></p>
+</form>
+
+{% endblock %}

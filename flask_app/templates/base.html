@@ -46,7 +46,8 @@
   <body>
     <nav>
       <a href="{{ url_for('index') }}">JHC Serralheria</a>
-      <a href="{{ url_for('lista_clientes') }}">Clientes</a>
+      <a href="{{ url_for('clientes_consulta') }}">Clientes</a>
+      <a href="{{ url_for('servicos_consulta') }}">Servicos</a>
     </nav>
     <hr />
     <div class="content">{% block content %} {% endblock %}</div>
