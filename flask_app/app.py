@@ -1,5 +1,5 @@
 import psycopg2
-from flask import Flask, render_template, request,redirect
+from flask import Flask, render_template, request, redirect, flash
 app = Flask(__name__)
 
 # criação da conecção com o banco de dados
@@ -40,6 +40,7 @@ def clientes_consulta():
 
 @app.route('/clientes/cadastro',methods=['GET','POST'])
 def clientes_cadastro():
+    
     with get_connection() as connection:
         with connection.cursor() as cursor:
             if request.method == "POST":
@@ -101,7 +102,117 @@ def servicos_consulta():
     
     with get_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM servicos")
+            cursor.execute('''
+            SELECT descricao, metodo_pagamento, nome FROM servicos
+            JOIN clientes ON servicos.id_cliente = clientes.id_cliente
+            ''')
             servicos = cursor.fetchall()
 
     return render_template("servicos.html", servicos=servicos)
+
+@app.route("/servicos/cadastro",methods=["GET","POST"])
+def servicos_cadastro():
+    
+    # pega os dados do cliente
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT id_cliente,nome FROM clientes")
+            clientes = cursor.fetchall()
+
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            if request.method == "POST":
+                descricao = request.form.get("descricao")
+                metodo = request.form.get("metodo_pagamento")
+                cliente_servico = request.form.get("cliente")
+                id_cliente = None
+
+                # troca o nome do cliente pela id
+                for cliente in clientes:
+                    if cliente_servico == cliente[1]:
+                        id_cliente = cliente[0]
+
+                print(id_cliente)
+                if id_cliente == None:
+                    return redirect("servicos/cadastro")
+                
+                print(descricao,metodo,id_cliente)
+                cursor.execute('''
+                INSERT INTO servicos (descricao, metodo_pagamento, id_cliente)
+                VALUES (%s, %s, %s)
+                ''',(descricao,metodo,id_cliente))
+                connection.commit()
+
+                return redirect("/servicos")
+    
+    return render_template("sevicos_casdastro.html",clientes=clientes)
+
+@app.route("/orcamentos",methods=["GET","POST"])
+def orcamentos_consulta():
+    
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT SUM(valor) FROM orcamentos")
+            total = cursor.fetchone()
+            cursor.execute('''
+                    SELECT valor,
+                        data_entrega,
+                        descricao,
+                        metodo_pagamento,
+                        nome
+                    FROM orcamentos
+                        JOIN servicos ON orcamentos.id_servico = servicos.id_servico
+                        JOIN clientes ON servicos.id_cliente = clientes.id_cliente
+                    ORDER BY data_entrega ASC
+                    ''')
+            orcamentos = cursor.fetchall()
+            
+
+
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            if request.method == "POST":
+                tipo = request.form.get("seletor_query_orcamento")
+
+                if tipo == "data_max":
+                    cursor.execute('''
+                    SELECT valor,
+                        data_entrega,
+                        descricao,
+                        metodo_pagamento,
+                        nome
+                    FROM orcamentos
+                        JOIN servicos ON orcamentos.id_servico = servicos.id_servico
+                        JOIN clientes ON servicos.id_cliente = clientes.id_cliente
+                    ORDER BY data_entrega DESC
+                    ''')
+                    orcamentos = cursor.fetchall()
+                elif tipo == "data_min":
+                    cursor.execute('''
+                    SELECT valor,
+                        data_entrega,
+                        descricao,
+                        metodo_pagamento,
+                        nome
+                    FROM orcamentos
+                        JOIN servicos ON orcamentos.id_servico = servicos.id_servico
+                        JOIN clientes ON servicos.id_cliente = clientes.id_cliente
+                    ORDER BY data_entrega ASC
+                    ''')
+                    orcamentos = cursor.fetchall()
+                else:
+                    cursor.execute('''
+                    SELECT valor,
+                        data_entrega,
+                        descricao,
+                        metodo_pagamento,
+                        nome
+                    FROM orcamentos
+                        JOIN servicos ON orcamentos.id_servico = servicos.id_servico
+                        JOIN clientes ON servicos.id_cliente = clientes.id_cliente
+                    ''')
+                    orcamentos = cursor.fetchall()
+
+                
+
+    return render_template("orcamentos.html",total=total,orcamentos=orcamentos)

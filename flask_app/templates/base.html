@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>{% block title %} {% endblock %}- FlaskApp</title>
+    <title>{% block title %} {% endblock %} JHC Serralheria</title>
     <style>
       
       body {
@@ -48,6 +48,7 @@
       <a href="{{ url_for('index') }}">JHC Serralheria</a>
       <a href="{{ url_for('clientes_consulta') }}">Clientes</a>
       <a href="{{ url_for('servicos_consulta') }}">Servicos</a>
+      <a href="{{ url_for('orcamentos_consulta') }}">Orçamentos</a>
     </nav>
     <hr />
     <div class="content">{% block content %} {% endblock %}</div>

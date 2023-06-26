@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <style>
+        #container_cadastro_servico{
+            display: flex;
+        }
+    </style>
+
+    <nav>
+        <a href="{{ url_for('servicos_consulta') }}">Consultar Servicos</a>
+        <a href="{{ url_for('servicos_cadastro') }}">Cadastrar Servicos</a>
+    </nav>
+
+    <h1>{% block title %} Serviços - Cadastro {% endblock %}</h1>
+
+    <div id="container_cadastro_servico">
+
+        <form id="form_cadastro_servico" action="" method="post"">
+            <p>
+                Descrição do serviço: <input type="text" name="descricao" id="input_servico_descricao"> <br>
+                Descrição do metodo de pagamento: <input type="text" name="metodo_pagamento" id="input_servico_meio_pagamento"> <br>
+                Cliente: <input type="text" name="cliente" id="input_servico_cliente"> <br>
+            </p>
+            <p><input type=submit value=Enviar></p>
+        </form>
+        <table> 
+            <tr>
+                <th>Clientes Cadastrados</th>
+            </tr>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{cliente[1]}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    Copie e cole o nome do cliente desejado no campo cliente <br>
+                    Cliente não cadastrado?
+                    <a href="{{url_for('clientes_cadastro')}}" onclick="">Clique Aqui para Cadastrar</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}

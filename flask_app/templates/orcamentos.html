@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{% block title %} Orçamentos - Consulta {% endblock %}</h1>
+
+    <form action="" method="post">
+        <p>
+            <input type="radio" name="seletor_query_orcamento" value="tudo"> Tudo <br>
+            <input type="radio" name="seletor_query_orcamento" value="data_max"> Consulta por Data Decrescente <br>
+            <input type="radio" name="seletor_query_orcamento" value="data_min"> Consulta por Data Ascendente <br>
+        </p>
+        <p><input type=submit value=Filtrar></p>
+    </form> 
+
+    <table>
+        <tr>
+            <th>Valor</th>
+            <th>Data de Entrega</th>
+            <th>Descrição do Serviço</th>
+            <th>Método de Pagamento</th>
+            <th>Nome do Cliente</th>
+        </tr>
+        {% for orcamento in orcamentos %}
+        <tr>
+            <td>{{orcamento[0]}}</td>
+            <td>{{orcamento[1]}}</td>
+            <td>{{orcamento[2]}}</td>
+            <td>{{orcamento[3]}}</td>
+            <td>{{orcamento[4]}}</td>
+        </tr>
+        {% endfor%}
+        <tr>
+            <td>Valor Total: {{total}}</td>
+        </tr>
+    </table>
+
+{% endblock %}

@@ -1,6 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <nav>
+        <a href="{{ url_for('servicos_consulta') }}">Consultar Servicos</a>
+        <a href="{{ url_for('servicos_cadastro') }}">Cadastrar Servicos</a>
+    </nav>
 
-consultas servico fodase
-{% endblock%}
+    <h1>{% block title %} Serviços - Consultas {% endblock %}</h1>
+
+    <table>
+        <tr>
+            <th>Descrição do Serviço</th>
+            <th>Método de Pagamento</th>
+            <th>Cliente</th>
+        </tr>    
+        {% for servico in servicos %}
+        <tr>
+            <td>{{servico[0]}}</td>
+            <td>{{servico[1]}}</td>
+            <td>{{servico[2]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
