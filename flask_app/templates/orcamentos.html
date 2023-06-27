@@ -2,13 +2,35 @@
 
 {% block content %}
 
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("intervalo_consulta_valor").style.display = "none"
+         }, false);
+    
+        function muda_display_form_consulta_orcamentos(src) {
+            
+            if(src.value == "intervalo_valor"){
+                document.getElementById("intervalo_consulta_valor").style.display = "block"
+            }else{
+                document.getElementById("intervalo_consulta_valor").style.display = "none"
+            }
+        }
+
+    </script>
+
     <h1>{% block title %} Orçamentos - Consulta {% endblock %}</h1>
 
     <form action="" method="post">
         <p>
-            <input type="radio" name="seletor_query_orcamento" value="tudo"> Tudo <br>
-            <input type="radio" name="seletor_query_orcamento" value="data_max"> Consulta por Data Decrescente <br>
-            <input type="radio" name="seletor_query_orcamento" value="data_min"> Consulta por Data Ascendente <br>
+            <input type="radio" name="seletor_query_orcamento" onchange="muda_display_form_consulta_orcamentos(this)" value="tudo"> Tudo <br>
+            <input type="radio" name="seletor_query_orcamento" onchange="muda_display_form_consulta_orcamentos(this)" value="data_max"> Consulta por Data Decrescente <br>
+            <input type="radio" name="seletor_query_orcamento" onchange="muda_display_form_consulta_orcamentos(this)" value="data_min"> Consulta por Data Ascendente <br>
+            <input type="radio" name="seletor_query_orcamento" onchange="muda_display_form_consulta_orcamentos(this)" value="intervalo_valor"> Consulta por Valor de Orçamento <br>
+        </p>
+        <p id="intervalo_consulta_valor">
+        Valor mínimo: <input type="number" name="valor_min" value="1000"> <br>
+        Valor máximo: <input type="number" name="valor_max" value="3000"> <br>
         </p>
         <p><input type=submit value=Filtrar></p>
     </form> 

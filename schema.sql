@@ -42,7 +42,7 @@ CREATE TABLE public.insumos (
 	id_insumo serial4 NOT NULL,
 	nome varchar NOT NULL,
 	tipo_insumo varchar NOT NULL,
-	custo money NOT NULL,
+	custo numeric(12,2) NOT NULL,
 	CONSTRAINT insumos_pk PRIMARY KEY (id_insumo)
 );
 
@@ -107,7 +107,7 @@ GRANT ALL ON TABLE public.servicos TO ademir_serralheria;
 CREATE TABLE public.orcamentos (
 	id_orcamento serial4 NOT NULL,
 	data_entrega date NOT NULL,
-	valor money NOT NULL,
+	valor numeric(12,2) NOT NULL,
 	id_servico int4 NOT NULL,
 	CONSTRAINT orcamentos_pk PRIMARY KEY (id_orcamento),
 	CONSTRAINT orcamentos_fk FOREIGN KEY (id_servico) REFERENCES public.servicos(id_servico)
@@ -215,7 +215,7 @@ CREATE TABLE public.prestadores_servicos (
 	nome varchar NOT NULL,
 	cnpj varchar NOT NULL,
 	tipo_servico varchar NOT NULL,
-	custo money NOT NULL,
+	custo numeric(12,2) NOT NULL,
 	id_endereco int4 NOT NULL,
 	CONSTRAINT prestadores_servicos_pk PRIMARY KEY (id_prestador_servico),
 	CONSTRAINT prestadores_servicos_fk FOREIGN KEY (id_endereco) REFERENCES public.enderecos(id_endereco)

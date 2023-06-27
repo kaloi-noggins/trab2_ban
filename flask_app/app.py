@@ -1,5 +1,6 @@
 import psycopg2
-from flask import Flask, render_template, request, redirect, flash
+import os
+from flask import Flask, render_template, request, redirect, send_from_directory
 app = Flask(__name__)
 
 # criação da conecção com o banco de dados
@@ -13,6 +14,9 @@ def get_connection():
     )
     return conn
 
+@app.route('/favicon.gif')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.gif')
 
 @app.route('/')
 def index():
@@ -29,6 +33,51 @@ def clientes_consulta():
                     cursor.execute("SELECT * FROM clientes WHERE tipo = 0")
                 elif tipo=="cnpj":
                     cursor.execute("SELECT * FROM clientes WHERE tipo = 1")
+                elif tipo=="valor":
+                    min = request.form.get("valor_min")
+                    max = request.form.get("valor_max")
+                    cursor.execute('''
+                    SELECT *
+                    FROM clientes
+                    WHERE id_cliente IN (
+                            SELECT id_cliente
+                            FROM servicos s
+                                JOIN orcamentos o ON s.id_servico = o.id_servico
+                            WHERE o.valor BETWEEN %s AND %s 
+                        )
+                    ''',(min,max))
+                elif tipo=="cliente_mais_caro":
+                    cursor.execute('''
+                    SELECT *
+                    FROM clientes
+                    WHERE id_cliente IN (
+                            SELECT id_cliente
+                            FROM servicos s
+                                JOIN orcamentos o ON s.id_servico = o.id_servico
+                            WHERE o.valor IN (SELECT MAX(valor) FROM orcamentos)
+                        )
+                    ''')
+                elif tipo=="cliente_mais_barato":
+                    cursor.execute('''
+                    SELECT *
+                    FROM clientes
+                    WHERE id_cliente IN (
+                            SELECT id_cliente
+                            FROM servicos s
+                                JOIN orcamentos o ON s.id_servico = o.id_servico
+                            WHERE o.valor IN (SELECT MIN(valor) FROM orcamentos)
+                        )
+                    ''')
+                elif tipo=="sem_orcamento":
+                    cursor.execute('''
+                    SELECT *
+                    FROM clientes
+                    WHERE id_cliente NOT IN (
+                            SELECT id_cliente
+                            FROM servicos s
+                                JOIN orcamentos o ON s.id_servico = o.id_servico
+                        )
+                    ''')
                 else:
                     cursor.execute("SELECT * FROM clientes")
             else:
@@ -52,8 +101,7 @@ def clientes_cadastro():
                 rua = request.form.get("rua")
                 numero = request.form.get("numero")
 
-                cursor.execute(
-                '''
+                cursor.execute('''
                 INSERT INTO enderecos (cep,cidade,bairro,rua,numero) 
                 VALUES (%s,%s,%s,%s,%s)
                 ''', (cep,cidade,bairro,rua,numero)
@@ -77,8 +125,7 @@ def clientes_cadastro():
                 print(temp)
                 if temp == "cpf":
                     cpf = request.form.get("cpf")
-                    cursor.execute(
-                    '''
+                    cursor.execute('''
                     INSERT INTO clientes (nome,referencia,tipo,cpf,cnpj,razao_social,id_endereco)
                     VALUES (%s,%s,%s,%s,%s,%s,%s)                        
                     ''', (nome,referencia,0,cpf,None,None,id_endereco))
@@ -153,7 +200,8 @@ def orcamentos_consulta():
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute("SELECT SUM(valor) FROM orcamentos")
-            total = cursor.fetchone()
+            # retorna lista de tuplas, entao pega primeiro indice da primeira tupla
+            total = cursor.fetchall()[0][0]
             cursor.execute('''
                     SELECT valor,
                         data_entrega,
@@ -167,8 +215,6 @@ def orcamentos_consulta():
                     ''')
             orcamentos = cursor.fetchall()
             
-
-
     with get_connection() as connection:
         with connection.cursor() as cursor:
             if request.method == "POST":
@@ -200,7 +246,9 @@ def orcamentos_consulta():
                     ORDER BY data_entrega ASC
                     ''')
                     orcamentos = cursor.fetchall()
-                else:
+                elif tipo == "intervalo_valor":
+                    min = request.form.get("valor_min")
+                    max = request.form.get("valor_max")
                     cursor.execute('''
                     SELECT valor,
                         data_entrega,
@@ -210,9 +258,12 @@ def orcamentos_consulta():
                     FROM orcamentos
                         JOIN servicos ON orcamentos.id_servico = servicos.id_servico
                         JOIN clientes ON servicos.id_cliente = clientes.id_cliente
-                    ''')
+                    WHERE valor BETWEEN %s AND %s
+                    ''',(min,max))
                     orcamentos = cursor.fetchall()
-
-                
+                    
+                    cursor.execute("SELECT SUM(valor) FROM orcamentos WHERE valor BETWEEN %s AND %s",(min,max))
+                    # retorna lista de tuplas, entao pega primeiro indice da primeira tupla
+                    total = cursor.fetchall()[0][0]
 
     return render_template("orcamentos.html",total=total,orcamentos=orcamentos)

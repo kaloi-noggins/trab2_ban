@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <script>
+            
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("intervalo_consulta_valor").style.display = "none"
+        }, false);
+
+        function muda_display_form_consulta_cliente(src) {
+            
+            if(src.value == "valor"){
+                document.getElementById("intervalo_consulta_valor").style.display = "block"
+            }else{
+                document.getElementById("intervalo_consulta_valor").style.display = "none"
+            }
+        }
+
+    </script>
+
     <nav>
         <a href="{{ url_for('clientes_consulta') }}">Consultar Clientes</a>
         <a href="{{ url_for('clientes_cadastro') }}">Cadastrar Clientes</a>
@@ -10,9 +27,17 @@
     
     <form action="" method="post">
         <p>
-            <input type="radio" name="seletor_query_clientes" value="tudo"> Tudo <br>
-            <input type="radio" name="seletor_query_clientes" value="cpf"> Pessoas Físicas <br>
-            <input type="radio" name="seletor_query_clientes" value="cnpj"> Pessoas Jurídicas <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="tudo"> Tudo <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="cpf"> Pessoas Físicas <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="cnpj"> Pessoas Jurídicas <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="valor"> Clientes por Valor Gasto em Orçamentos <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="cliente_mais_caro"> Clientes com Orçamento mais Caro <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="cliente_mais_barato"> Clientes com Orçamento mais Barato <br>
+            <input type="radio" name="seletor_query_clientes" onchange="muda_display_form_consulta_cliente(this)" value="sem_orcamento"> Clientes sem Orçamentos <br>
+        </p>
+        <p id="intervalo_consulta_valor">
+            Valor mínimo: <input type="number" name="valor_min" value="1000"> <br>
+            Valor máximo: <input type="number" name="valor_max" value="3000"> <br>
         </p>
         <p><input type=submit value=Filtrar></p>
     </form> 
