@@ -1,9 +1,10 @@
 import psycopg2
 import os
 from flask import Flask, render_template, request, redirect, send_from_directory
-app = Flask(__name__)
 
-# criação da conecção com o banco de dados
+serralheria = Flask(__name__)
+
+# Conecção com o banco
 def get_connection():
     conn = psycopg2.connect(
         host="localhost",
@@ -14,15 +15,17 @@ def get_connection():
     )
     return conn
 
-@app.route('/favicon.gif')
+# Rotas primarias
+@serralheria.route('/favicon.gif')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.gif')
+    return send_from_directory(os.path.join(serralheria.root_path, 'static'),'favicon.gif')
 
-@app.route('/')
+@serralheria.route('/')
 def index():
     return render_template("index.html")
 
-@app.route('/clientes',methods=['GET','POST'])
+# Clientes
+@serralheria.route('/clientes',methods=['GET','POST'])
 def clientes_consulta():
     
     with get_connection() as connection:
@@ -85,9 +88,9 @@ def clientes_consulta():
             
             clientes = cursor.fetchall()
 
-    return render_template("clientes.html", clientes=clientes)
+    return render_template("clientes/consulta.html", clientes=clientes)
 
-@app.route('/clientes/cadastro',methods=['GET','POST'])
+@serralheria.route('/clientes/cadastro',methods=['GET','POST'])
 def clientes_cadastro():
     
     with get_connection() as connection:
@@ -142,9 +145,10 @@ def clientes_cadastro():
                 
                 return redirect("/clientes")
                 
-    return render_template("clientes_cadastro.html")
+    return render_template("clientes/cadastro.html")
 
-@app.route('/servicos',methods=['GET'])
+# Servicos
+@serralheria.route('/servicos',methods=['GET'])
 def servicos_consulta():
     
     with get_connection() as connection:
@@ -155,9 +159,9 @@ def servicos_consulta():
             ''')
             servicos = cursor.fetchall()
 
-    return render_template("servicos.html", servicos=servicos)
+    return render_template("servicos/consulta.html", servicos=servicos)
 
-@app.route("/servicos/cadastro",methods=["GET","POST"])
+@serralheria.route("/servicos/cadastro",methods=["GET","POST"])
 def servicos_cadastro():
     
     # pega os dados do cliente
@@ -165,6 +169,7 @@ def servicos_cadastro():
         with connection.cursor() as cursor:
             cursor.execute("SELECT id_cliente,nome FROM clientes")
             clientes = cursor.fetchall()
+            print(clientes)
 
     with get_connection() as connection:
         with connection.cursor() as cursor:
@@ -181,7 +186,7 @@ def servicos_cadastro():
 
                 print(id_cliente)
                 if id_cliente == None:
-                    return redirect("servicos/cadastro")
+                    return redirect("/cadastro")
                 
                 print(descricao,metodo,id_cliente)
                 cursor.execute('''
@@ -192,9 +197,10 @@ def servicos_cadastro():
 
                 return redirect("/servicos")
     
-    return render_template("sevicos_casdastro.html",clientes=clientes)
+    return render_template("servicos/cadastro.html",clientes=clientes)
 
-@app.route("/orcamentos",methods=["GET","POST"])
+# Orcamentos
+@serralheria.route("/orcamentos",methods=["GET","POST"])
 def orcamentos_consulta():
     
     with get_connection() as connection:
@@ -266,4 +272,44 @@ def orcamentos_consulta():
                     # retorna lista de tuplas, entao pega primeiro indice da primeira tupla
                     total = cursor.fetchall()[0][0]
 
-    return render_template("orcamentos.html",total=total,orcamentos=orcamentos)
+    return render_template("orcamentos/consulta.html",total=total,orcamentos=orcamentos)
+
+@serralheria.route("/orcamentos/cadastro",methods=["GET","POST"])
+def orcamentos_cadastro():
+    return render_template("orcamentos/cadastro.html")
+
+# Projetos
+@serralheria.route("/projetos",methods=["GET","POST"])
+def projetos_consulta():
+    return render_template("projetos/consulta.html")
+
+@serralheria.route("/projetos/cadastro",methods=["GET","POST"])
+def projetos_cadastro():
+    return render_template("projetos/cadastro.html")
+
+# Insumos
+@serralheria.route("/insumos",methods=["GET","POST"])
+def insumos_consulta():
+    return render_template("insumos/consulta.html")
+
+@serralheria.route("/insumos/cadastro",methods=["GET","POST"])
+def insumos_cadastro():
+    return render_template("insumos/cadastro.html")
+
+# Fornecedores
+@serralheria.route("/fornecedores",methods=["GET","POST"])
+def fornecedores_consulta():
+    return render_template("fornecedores/consulta.html")
+
+@serralheria.route("/fornecedores/cadastro",methods=["GET","POST"])
+def fornecedores_cadastro():
+    return render_template("fornecedores/cadastro.html")
+
+# Prestadores_servicos
+@serralheria.route("/prestadores_servicos",methods=["GET","POST"])
+def prestadores_servicos_consulta():
+    return render_template("prestadores_servicos/consulta.html")
+
+@serralheria.route("/prestadores_servicos/cadastro",methods=["GET","POST"])
+def prestadores_servicos_cadastro():
+    return render_template("prestadores_servicos/cadastro.html")
